@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     VecSetFromOptions(initial_positions);
 
     // Initialize the positions of walkers using a uniform distribution
-    initializer.gaussian(initial_positions, gridSize);
+    initializer.uniform(initial_positions, gridSize);
 
     // Save initial positions to the HDF5 file
     PetscViewer viewer;
