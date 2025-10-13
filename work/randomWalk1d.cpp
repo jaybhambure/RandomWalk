@@ -1,7 +1,7 @@
 #include <petsc.h>
 #include <petscdmda.h>
 #include <petscviewerhdf5.h>
-#include "GridRandomWalk1D.hpp"
+#include "randomWalk1d.hpp"
 
 int main(int argc, char **argv) {
     PetscInitialize(&argc, &argv, NULL, NULL);
