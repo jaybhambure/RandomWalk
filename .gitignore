@@ -1,0 +1,132 @@
+# Compiled executables and binaries
+randomWalk1d
+*/randomWalk1d
+randomWalk*
+!randomWalk*.cpp
+!randomWalk*.h
+
+# Object files and compiled artifacts
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+
+# Build directories
+build/
+bin/
+obj/
+debug/
+release/
+
+# Generated data files
+*.h5
+*.hdf5
+*.dat
+*.data
+*_data.*
+
+# Plot output files
+*.png
+*.pdf
+*.eps
+*.svg
+*.jpg
+*.jpeg
+plots/
+*plots*
+
+# Log files
+*.log
+*.out
+*.err
+petsc.log*
+performance.log*
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.*.swp
+
+# Python cache and bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.py[cod]
+*$py.class
+
+# Virtual environments (if any)
+venv/
+env/
+.env
+.venv
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Core dumps
+core
+core.*
+
+# PETSc specific
+*.info
+*.xml
+*.log.*
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Documentation build artifacts (keep source docs)
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+!documentation.pdf
+
+# Keep important documentation but ignore generated docs
+!README.md
+!ReadMe.md
+!*.md
+
+# Keep source code and build files
+!Makefile
+!makefile
+!*.cpp
+!*.c
+!*.hpp
+!*.h
+!*.py
+
+# Keep configuration files if any
+!*.json
+!*.yaml
+!*.yml
+!*.toml
+!*.ini
