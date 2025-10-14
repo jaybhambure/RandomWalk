@@ -8,15 +8,17 @@ int main(int argc, char **argv) {
     // Initialize PETSc
     ierr = PetscInitialize(&argc, &argv, (char*)0, "1D Random Walk with DMDA"); CHKERRQ(ierr);
     
-    // Simulation parameters (modify these values directly)
+    // Simulation parameters
     PetscInt grid_size = 100;
     PetscInt num_steps = 1000;
-    PetscInt num_walkers = 1000;  // Change this number as needed
+    PetscInt num_walkers = 1000;
+    PetscInt dof = 1;
+    PetscInt stencil_width = 1;
     
     // Create 1D DMDA (single process, periodic boundaries)
     DM da;
     ierr = DMDACreate1d(PETSC_COMM_SELF, DM_BOUNDARY_PERIODIC, grid_size, 
-                        1, 0, NULL, &da); CHKERRQ(ierr);
+                        dof, stencil_width, NULL, &da); CHKERRQ(ierr);
     ierr = DMSetFromOptions(da); CHKERRQ(ierr);
     ierr = DMSetUp(da); CHKERRQ(ierr);
     
