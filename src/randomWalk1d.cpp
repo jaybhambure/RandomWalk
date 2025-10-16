@@ -6,23 +6,25 @@ int main(int argc, char **argv) {
     PetscErrorCode ierr;
     
     // Initialize PETSc
-    ierr = PetscInitialize(&argc, &argv, (char*)0, "1D Random Walk with DMDA"); CHKERRQ(ierr);
+    ierr = PetscInitialize(&argc, &argv, (char*)0, "1D Random Walk with DMgrid"); CHKERRQ(ierr);
     
-    // Simulation parameters (modify these values directly)
+    // Simulation parameters
     PetscInt grid_size = 100;
     PetscInt num_steps = 1000;
-    PetscInt num_walkers = 1000;  // Change this number as needed
+    PetscInt num_walkers = 1000;
+    PetscInt dof = 1;
+    PetscInt stencil_width = 1;
     
-    // Create 1D DMDA (single process, periodic boundaries)
-    DM da;
+    // Create 1D DMgrid (single process, periodic boundaries)
+    DM grid;
     ierr = DMDACreate1d(PETSC_COMM_SELF, DM_BOUNDARY_PERIODIC, grid_size, 
-                        1, 0, NULL, &da); CHKERRQ(ierr);
-    ierr = DMSetFromOptions(da); CHKERRQ(ierr);
-    ierr = DMSetUp(da); CHKERRQ(ierr);
-    
-    // Create vector for walker density
+                        dof, stencil_width, NULL, &grid); CHKERRQ(ierr);
+    ierr = DMSetFromOptions(grid); CHKERRQ(ierr);
+    ierr = DMSetUp(grid); CHKERRQ(ierr);
+
+    // Create vector for walker density = no. of walkers/grid point
     Vec walker_density;
-    ierr = DMCreateGlobalVector(da, &walker_density); CHKERRQ(ierr);
+    ierr = DMCreateGlobalVector(grid, &walker_density); CHKERRQ(ierr);
     ierr = VecZeroEntries(walker_density); CHKERRQ(ierr);
     
     // Array to store walker positions
@@ -34,7 +36,7 @@ int main(int argc, char **argv) {
     // Initialize walker positions (spread them out)
     for (PetscInt w = 0; w < num_walkers; w++) {
         walker_positions[w] = (grid_size / num_walkers) * w + grid_size / (2 * num_walkers);
-        trajectories[w].push_back(walker_positions[w]);  // Store initial position
+        trajectories[w].push_back(walker_positions[w]);
         ierr = VecSetValue(walker_density, walker_positions[w], 1.0, ADD_VALUES); CHKERRQ(ierr);
     }
     ierr = VecAssemblyBegin(walker_density); CHKERRQ(ierr);
@@ -50,14 +52,10 @@ int main(int argc, char **argv) {
     PetscPrintf(PETSC_COMM_SELF, "Number of walkers: %d\n", num_walkers);
     PetscPrintf(PETSC_COMM_SELF, "Number of steps: %d\n", num_steps);
     PetscPrintf(PETSC_COMM_SELF, "Initial positions: ");
-    for (PetscInt w = 0; w < num_walkers; w++) {
-        PetscPrintf(PETSC_COMM_SELF, "%d ", walker_positions[w]);
-    }
-    PetscPrintf(PETSC_COMM_SELF, "\n");
     
     // Perform random walk
     for (PetscInt i = 0; i < num_steps; i++) {
-        // Clear all current positions
+        
         ierr = VecZeroEntries(walker_density); CHKERRQ(ierr);
         
         // Move each walker
@@ -65,11 +63,11 @@ int main(int argc, char **argv) {
             // Take a random step (-1 or +1)
             PetscInt random_step = (step_choice(gen) == 0) ? -1 : 1;
             walker_positions[w] += random_step;
-            
+
             // Apply periodic boundary conditions
             walker_positions[w] = (walker_positions[w] + grid_size) % grid_size;
             
-            // Store position in trajectory (every 10 steps to avoid too much data)
+            // Store position in trajectory (every 10 steps to avoid too much gridta)
             if (i % 10 == 0) {
                 trajectories[w].push_back(walker_positions[w]);
             }
@@ -80,32 +78,11 @@ int main(int argc, char **argv) {
         
         ierr = VecAssemblyBegin(walker_density); CHKERRQ(ierr);
         ierr = VecAssemblyEnd(walker_density); CHKERRQ(ierr);
-        
-        // Print progress every 100 steps
-        if (i % 100 == 0) {
-            PetscPrintf(PETSC_COMM_SELF, "Step %d: positions = ", i);
-            for (PetscInt w = 0; w < num_walkers; w++) {
-                PetscPrintf(PETSC_COMM_SELF, "%d ", walker_positions[w]);
-            }
-            PetscPrintf(PETSC_COMM_SELF, "\n");
-            
-            // Optionally view the grid state
-            if (i == 0 || i == 500) {
-                PetscPrintf(PETSC_COMM_SELF, "DMDA grid state at step %d:\n", i);
-                ierr = VecView(walker_density, PETSC_VIEWER_STDOUT_SELF); CHKERRQ(ierr);
-            }
-        }
     }
-    
-    PetscPrintf(PETSC_COMM_SELF, "Final positions: ");
-    for (PetscInt w = 0; w < num_walkers; w++) {
-        PetscPrintf(PETSC_COMM_SELF, "%d ", walker_positions[w]);
-    }
-    PetscPrintf(PETSC_COMM_SELF, "\n");
-    
-    // Save data to HDF5 file
+
+    // Save grid data to HDF5 file
     PetscViewer viewer;
-    ierr = PetscViewerHDF5Open(PETSC_COMM_SELF, "randWalk1d_data.h5", FILE_MODE_WRITE, &viewer); CHKERRQ(ierr);
+    ierr = PetscViewerHDF5Open(PETSC_COMM_SELF, "randWalk1d_gridta.h5", FILE_MODE_WRITE, &viewer); CHKERRQ(ierr);
     
     // Save simulation parameters as attributes
     ierr = PetscViewerHDF5WriteAttribute(viewer, NULL, "grid_size", PETSC_INT, &grid_size); CHKERRQ(ierr);
@@ -157,13 +134,9 @@ int main(int argc, char **argv) {
     ierr = VecDestroy(&traj_vec); CHKERRQ(ierr);
     ierr = PetscViewerDestroy(&viewer); CHKERRQ(ierr);
     
-    PetscPrintf(PETSC_COMM_SELF, "Data saved to randWalk1d_data.h5\n");
-    PetscPrintf(PETSC_COMM_SELF, "Final DMDA grid state:\n");
-    ierr = VecView(walker_density, PETSC_VIEWER_STDOUT_SELF); CHKERRQ(ierr);
-    
     // Clean up PETSc objects
     ierr = VecDestroy(&walker_density); CHKERRQ(ierr);
-    ierr = DMDestroy(&da); CHKERRQ(ierr);
+    ierr = DMDestroy(&grid); CHKERRQ(ierr);
     
     // Finalize PETSc
     ierr = PetscFinalize(); CHKERRQ(ierr);

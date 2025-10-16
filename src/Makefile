@@ -1,3 +1,7 @@
+# Set PETSc directories directly
+PETSC_DIR = /home/jay/petsc
+PETSC_ARCH = arch-linux-c-debug
+
 include ${PETSC_DIR}/lib/petsc/conf/variables
 include ${PETSC_DIR}/lib/petsc/conf/rules
 

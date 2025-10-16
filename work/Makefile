@@ -1,3 +1,7 @@
+# Set PETSc directories directly
+PETSC_DIR = /home/jay/petsc
+PETSC_ARCH = arch-linux-c-debug
+
 include ${PETSC_DIR}/lib/petsc/conf/variables
 include ${PETSC_DIR}/lib/petsc/conf/rules
 
@@ -19,13 +23,13 @@ tex:
 	@pdflatex randomwalk_notes.tex > /dev/null 2>&1
 	@pdflatex randomwalk_notes.tex > /dev/null 2>&1
 	@rm -f *.aux *.log *.out *.toc *.fls *.fdb_latexmk *.synctex.gz
-	@echo "PDF documentation generated: randomwalk_notes.pdf"
+	@echo "✅ PDF documentation generated: randomwalk_notes.pdf"
 
 # Clean up all generated files (extends PETSc clean rule)
 cleanall: clean
 	@echo "Cleaning up HDF5 data and LaTeX auxiliary files..."
 	@rm -f *.h5
 	@rm -f *.aux *.log *.out *.toc *.fls *.fdb_latexmk *.synctex.gz
-	@echo "Complete cleanup finished"
+	@echo "✅ Complete cleanup finished"
 
 .PHONY: run plot tex cleanall
