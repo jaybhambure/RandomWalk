@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 
     // Save grid data to HDF5 file
     PetscViewer viewer;
-    ierr = PetscViewerHDF5Open(PETSC_COMM_SELF, "randWalk1d_gridta.h5", FILE_MODE_WRITE, &viewer); CHKERRQ(ierr);
+    ierr = PetscViewerHDF5Open(PETSC_COMM_SELF, "randWalk1d_data.h5", FILE_MODE_WRITE, &viewer); CHKERRQ(ierr);
     
     // Save simulation parameters as attributes
     ierr = PetscViewerHDF5WriteAttribute(viewer, NULL, "grid_size", PETSC_INT, &grid_size); CHKERRQ(ierr);
