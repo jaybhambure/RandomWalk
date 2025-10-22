@@ -15,7 +15,7 @@ run: randomWalk1d
 
 plot:
 	@echo "Generating plots from HDF5 data..."
-	@python3 plot_results.py
+	@python3 randomWalk_plot.py
 
 # Compile LaTeX documentation (keep only PDF, remove auxiliary files)
 tex:

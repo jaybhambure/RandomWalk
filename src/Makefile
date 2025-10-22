@@ -15,7 +15,7 @@ run: randomWalk1d
 
 plot:
 	@echo "Generating plots from HDF5 data..."
-	@python3 plot_results.py
+	@python3 randomWalk_plot.py
 
 # Compile LaTeX documentation (keep only PDF, remove auxiliary files)
 tex:
@@ -25,11 +25,11 @@ tex:
 	@rm -f *.aux *.log *.out *.toc *.fls *.fdb_latexmk *.synctex.gz
 	@echo "✅ PDF documentation generated: randomwalk_notes.pdf"
 
-# Clean up all generated files (extends PETSc clean rule)
-cleanall: clean
-	@echo "Cleaning up HDF5 data and LaTeX auxiliary files..."
-	@rm -f *.h5
+# Remove all generated files (avoids conflict with PETSc clean)
+remove:
+	@echo "Removing all generated files..."
+	@rm -f randomWalk1d *.o *.h5 *.png
 	@rm -f *.aux *.log *.out *.toc *.fls *.fdb_latexmk *.synctex.gz
-	@echo "✅ Complete cleanup finished"
+	@echo "All files removed"
 
-.PHONY: run plot tex cleanall
+.PHONY: run plot tex remove
