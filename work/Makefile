@@ -23,13 +23,13 @@ tex:
 	@pdflatex randomwalk_notes.tex > /dev/null 2>&1
 	@pdflatex randomwalk_notes.tex > /dev/null 2>&1
 	@rm -f *.aux *.log *.out *.toc *.fls *.fdb_latexmk *.synctex.gz
-	@echo "✅ PDF documentation generated: randomwalk_notes.pdf"
+	@echo "PDF documentation generated: randomwalk_notes.pdf"
 
-# Clean up all generated files (extends PETSc clean rule)
-cleanall: clean
-	@echo "Cleaning up HDF5 data and LaTeX auxiliary files..."
-	@rm -f *.h5
+# Remove all generated files (avoids conflict with PETSc clean)
+remove:
+	@echo "Removing all generated files..."
+	@rm -f randomWalk1d *.o *.h5 *.png
 	@rm -f *.aux *.log *.out *.toc *.fls *.fdb_latexmk *.synctex.gz
-	@echo "✅ Complete cleanup finished"
+	@echo "All files removed"
 
-.PHONY: run plot tex cleanall
+.PHONY: run plot tex remove
